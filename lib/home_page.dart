@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:splash_screen/how_model.dart';
+import 'package:splash_screen/main.dart';
 import 'package:splash_screen/salat_details.dart';
 
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage>
+    with WidgetsBindingObserver, RouteAware {
   PlayerState isPlaying = PlayerState.playing;
   bool isPlayingbool = true;
   bool _isInForeground = true;
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    playAudio();
+   playAudio();
     setState(() {
       player.onPlayerStateChanged.listen((event) {
         isPlaying = event;
@@ -59,6 +61,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPush() {}
+
+  @override
+  void didPushNext() {
+    print('sqqs Screen3');
+    pauseAudio();
+
+    super.didPushNext();
+  }
+
+  @override
+  void didPopNext() {
+    print('didPopNext Screen3');
+   
+    resumeAudio();
+  }
+
   // @override
   // void dispose() {
   //   player.dispose();
@@ -68,16 +100,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        playAudio();
+        resumeAudio();
         break;
       case AppLifecycleState.inactive:
         print("app in inactive");
+                pauseAudio();
         break;
       case AppLifecycleState.paused:
         pauseAudio();
         break;
       case AppLifecycleState.detached:
         print("app in detached");
+        pauseAudio();
         break;
     }
   }
@@ -155,14 +189,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             for (int index = 0; index < salawat.length; index++)
               InkWell(
                   onLongPress: () {
-                    pauseAudio();
+                    // pauseAudio();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               SalatDetails(salatModel: salawat[index]),
                         )).then((_) {
-                      playAudio();
+                      // playAudio();
                     });
                     ;
                   },
