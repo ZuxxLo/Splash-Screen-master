@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:splash_screen/how_model.dart';
 import 'package:splash_screen/salat_details.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'salat_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,7 +14,74 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  PlayerState isPlaying = PlayerState.playing;
+  bool isPlayingbool = true;
+  bool _isInForeground = true;
+
+  final player = AudioPlayer();
+
+  playAudio() async {
+    String audioasset = "assets/nature_sounds.mp3";
+    ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+    Uint8List audiobytes =
+        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    await player.play(BytesSource(audiobytes));
+    player.setReleaseMode(ReleaseMode.loop);
+  }
+
+  stopAudio() async {
+    await player.stop();
+  }
+
+  pauseAudio() async {
+    isPlayingbool = false;
+    await player.pause();
+  }
+
+  resumeAudio() async {
+    isPlayingbool = true;
+
+    await player.resume();
+  }
+
+  @override
+  void initState() {
+    playAudio();
+    setState(() {
+      player.onPlayerStateChanged.listen((event) {
+        isPlaying = event;
+        isPlayingbool = event == PlayerState.playing;
+      });
+    });
+
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  // @override
+  // void dispose() {
+  //   player.dispose();
+  //   super.dispose();
+  // }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        playAudio();
+        break;
+      case AppLifecycleState.inactive:
+        print("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        pauseAudio();
+        break;
+      case AppLifecycleState.detached:
+        print("app in detached");
+        break;
+    }
+  }
+
   bool isDoubleClicked = false;
   int indexState = 0;
   List<SalatModel> salawat = [
@@ -64,6 +134,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                if (isPlayingbool)
+                  pauseAudio();
+                else
+                  resumeAudio();
+
+                setState(() {});
+              },
+              icon: Icon((isPlayingbool ? Icons.pause : Icons.play_arrow))),
+        ],
         title: const Text('Salatuk'),
         centerTitle: true,
       ),
@@ -73,12 +155,16 @@ class _HomePageState extends State<HomePage> {
             for (int index = 0; index < salawat.length; index++)
               InkWell(
                   onLongPress: () {
+                    pauseAudio();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               SalatDetails(salatModel: salawat[index]),
-                        ));
+                        )).then((_) {
+                      playAudio();
+                    });
+                    ;
                   },
                   onTap: () {
                     String text = "${salawat[index].rakaat}";

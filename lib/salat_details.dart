@@ -1,9 +1,8 @@
-import 'dart:typed_data';
-
+ 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:splash_screen/bmi%20app/bmihome1.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:splash_screen/bmi%20app/bmihome1.dart';
 
 import 'package:splash_screen/salat_model.dart';
 
@@ -25,48 +24,48 @@ class _SalatDetailsState extends State<SalatDetails> {
 
   final player = AudioPlayer();
 
-  playAudio() async {
-    String audioasset = "assets/nature_sounds.mp3";
-    ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
-    Uint8List audiobytes =
-        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
-    await player.play(BytesSource(audiobytes));
-    player.setReleaseMode(ReleaseMode.loop);
-  }
+  // playAudio() async {
+  //   String audioasset = "assets/nature_sounds.mp3";
+  //   ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+  //   Uint8List audiobytes =
+  //       bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+  //   await player.play(BytesSource(audiobytes));
+  //   player.setReleaseMode(ReleaseMode.loop);
+  // }
 
-  stopAudio() async {
-    await player.stop();
-  }
+  // stopAudio() async {
+  //   await player.stop();
+  // }
 
-  pauseAudio() async {
-    isPlayingbool = false;
-    await player.pause();
-  }
+  // pauseAudio() async {
+  //   isPlayingbool = false;
+  //   await player.pause();
+  // }
 
-  resumeAudio() async {
-    isPlayingbool = true;
+  // resumeAudio() async {
+  //   isPlayingbool = true;
 
-    await player.resume();
-  }
+  //   await player.resume();
+  // }
 
-  @override
-  void initState() {
-    playAudio();
-    setState(() {
-      player.onPlayerStateChanged.listen((event) {
-        isPlaying = event;
-        isPlayingbool = event == PlayerState.playing;
-      });
-    });
+  // @override
+  // void initState() {
+  //   playAudio();
+  //   setState(() {
+  //     player.onPlayerStateChanged.listen((event) {
+  //       isPlaying = event;
+  //       isPlayingbool = event == PlayerState.playing;
+  //     });
+  //   });
 
-    super.initState();
-  }
+  //   super.initState();
+  // }
 
-  @override
-  void dispose() {
-    player.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   player.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,18 +73,18 @@ class _SalatDetailsState extends State<SalatDetails> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.salatModel.salat),
-        actions: [
-          IconButton(
-              onPressed: () {
-                if (isPlayingbool)
-                  pauseAudio();
-                else
-                  resumeAudio();
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         if (isPlayingbool)
+        //           pauseAudio();
+        //         else
+        //           resumeAudio();
 
-                setState(() {});
-              },
-              icon: Icon((isPlayingbool ? Icons.pause : Icons.play_arrow))),
-        ],
+        //         setState(() {});
+        //       },
+        //       icon: Icon((isPlayingbool ? Icons.pause : Icons.play_arrow))),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Container(
