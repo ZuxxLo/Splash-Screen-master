@@ -2,11 +2,14 @@ class SalatModel {
   late String salat;
   late int rakaat;
   late String image;
-  late bool isLongPressed;
+  late bool isDoubleClicked;
+  late String salatDescription;
+
   SalatModel({
     required this.salat,
     required this.rakaat,
     required this.image,
-    required this.isLongPressed,
+    required this.isDoubleClicked,
+    required this.salatDescription,
   });
 }

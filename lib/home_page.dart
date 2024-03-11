@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:splash_screen/how_model.dart';
+import 'package:splash_screen/salat_details.dart';
 
 import 'salat_model.dart';
 
@@ -11,31 +12,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isLongPressed = false;
+  bool isDoubleClicked = false;
   int indexState = 0;
   List<SalatModel> salawat = [
     SalatModel(
         salat: "Fajr",
         rakaat: 2,
         image: "assets/fajr.png",
-        isLongPressed: false),
+        salatDescription:
+            "Salat Sobh ou salat Fajr est une prière pratiquée par les musulmans entre l'aube et le lever du soleil. C'est la première, ou la troisième, des cinq prières quotidiennes appelées salat. Elle comprend deux rak'ah. ",
+        isDoubleClicked: false),
     SalatModel(
         salat: "Dohr",
         rakaat: 4,
         image: "assets/dohr.png",
-        isLongPressed: false),
+        salatDescription:
+            "Salat Dhuhr est une prière pratiquée par les musulmans juste après que le soleil passe au zénith. C'est la deuxième, ou la quatrième, des cinq prières quotidiennes appelées salat. Le vendredi elle est remplacée par la prière du vendredi à la mosquée. Elle comprend quatre rak'ahs.",
+        isDoubleClicked: false),
     SalatModel(
-        salat: "Asr", rakaat: 4, image: "assets/asr.png", isLongPressed: false),
+        salat: "Asr",
+        rakaat: 4,
+        salatDescription:
+            "Salat Asr est une prière pratiquée par les musulmans lorsque le soleil est à mi-chemin entre le zénith et le coucher. C'est la troisième, ou la cinquième, des cinq prières quotidiennes appelées salat.",
+        image: "assets/asr.png",
+        isDoubleClicked: false),
     SalatModel(
-        salat: "Magreb",
+        salat: "Maghrib",
         rakaat: 3,
+        salatDescription:
+            "Salat Maghrib est une prière pratiquée par les musulmans entre le coucher du soleil et la tombée de la nuit. C'est la quatrième, ou la première, des cinq prières quotidiennes appelées salat. ",
         image: "assets/maghreb.png",
-        isLongPressed: false),
+        isDoubleClicked: false),
     SalatModel(
         salat: "3icha",
         rakaat: 4,
+        salatDescription:
+            "Salat Icha est une prière pratiquée par les musulmans après la tombée de la nuit. C'est la cinquième, ou la deuxième, des cinq prières quotidiennes obligatoires appelées salat. ",
         image: "assets/3icha.png",
-        isLongPressed: false)
+        isDoubleClicked: false)
   ];
   List<HowModel> steps = [
     HowModel(step: "wodo2", image: "assets/1.png"),
@@ -58,6 +72,14 @@ class _HomePageState extends State<HomePage> {
           children: [
             for (int index = 0; index < salawat.length; index++)
               InkWell(
+                  onLongPress: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SalatDetails(salatModel: salawat[index]),
+                        ));
+                  },
                   onTap: () {
                     String text = "${salawat[index].rakaat}";
                     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -70,15 +92,15 @@ class _HomePageState extends State<HomePage> {
                           Text("Rakaat :$text", textAlign: TextAlign.center),
                     ));
                   },
-                  onLongPress: () {
-                    isFirstTimeRotated=0;
+                  onDoubleTap: () {
+                    isFirstTimeRotated = 0;
                     print(index);
                     setState(() {
-                      salawat[index].isLongPressed =
-                          !salawat[index].isLongPressed;
+                      salawat[index].isDoubleClicked =
+                          !salawat[index].isDoubleClicked;
                     });
                   },
-                  child: !salawat[index].isLongPressed
+                  child: !salawat[index].isDoubleClicked
                       ? TweenAnimationBuilder(
                           tween: Tween<double>(begin: 0.0, end: 1.0),
                           duration: Duration(seconds: 1),
