@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:splash_screen/how_model.dart';
-import 'package:splash_screen/main.dart';
-import 'package:splash_screen/salat_details.dart';
-
+ import 'package:splash_screen/main.dart';
+ 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'how_model.dart';
+import 'salat_details.dart';
 import 'salat_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-   playAudio();
+    playAudio();
     setState(() {
       player.onPlayerStateChanged.listen((event) {
         isPlaying = event;
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage>
   @override
   void didPopNext() {
     print('didPopNext Screen3');
-   
+
     resumeAudio();
   }
 
@@ -100,13 +100,17 @@ class _HomePageState extends State<HomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
+        print("app in resumed");
+
         resumeAudio();
         break;
       case AppLifecycleState.inactive:
         print("app in inactive");
-                pauseAudio();
+        pauseAudio();
         break;
       case AppLifecycleState.paused:
+        print("app in paused");
+
         pauseAudio();
         break;
       case AppLifecycleState.detached:
@@ -184,9 +188,10 @@ class _HomePageState extends State<HomePage>
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        // scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            for (int index = 0; index < salawat.length; index++)
+             for (int index = 0; index < salawat.length; index++)
               InkWell(
                   onLongPress: () {
                     // pauseAudio();

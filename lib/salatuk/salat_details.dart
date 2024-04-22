@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:splash_screen/bmi%20app/bmihome1.dart';
 
-import 'package:splash_screen/salat_model.dart';
+import 'salat_model.dart';
 
+ 
 class SalatDetails extends StatefulWidget {
   const SalatDetails({
     Key? key,
