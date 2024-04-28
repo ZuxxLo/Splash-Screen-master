@@ -91,42 +91,43 @@ class _HomePageState extends State<HomePage>
           title: const Text("Note it"),
           centerTitle: true,
           actions: [
-            IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      content: SizedBox(
-                        height: 110,
-                        child: Column(
-                          children: [
-                            const Text(
-                                "Are you sure you want to delete all notes"),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Cancel")),
-                                const SizedBox(width: 10),
-                                TextButton(
-                                    onPressed: () {
-                                      setState(() {});
-                                      Db().clearNotesTable();
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Delete all notes"))
-                              ],
-                            )
-                          ],
+            if (notesList.isNotEmpty)
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: SizedBox(
+                          height: 110,
+                          child: Column(
+                            children: [
+                              const Text(
+                                  "Are you sure you want to delete all notes"),
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Cancel")),
+                                  const SizedBox(width: 10),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {});
+                                        Db().clearNotesTable();
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Delete all notes"))
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.delete_forever))
+                    );
+                  },
+                  icon: const Icon(Icons.delete_forever))
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -211,18 +212,85 @@ class _HomePageState extends State<HomePage>
                               onLongPress: () {
                                 deleteDiagMeth(context, index);
                               },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                margin:
-                                    const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                decoration: BoxDecoration(
-                                    color: Colors.deepPurpleAccent
-                                        .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Colors.deepPurpleAccent)),
-                                child: Text(notesList[index].noteText,
-                                    style: const TextStyle(fontSize: 18)),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10, 10, 10, 0),
+                                      decoration: BoxDecoration(
+                                          color: Colors.deepPurpleAccent
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Colors.deepPurpleAccent)),
+                                      child: Text(notesList[index].noteText,
+                                          style: const TextStyle(fontSize: 18)),
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        NoteModel? note = NoteModel(
+                                            noteText: "",
+                                            noteDate: NoteModel.dateFormat(
+                                                DateTime.now()));
+                                        addTextNote(value) {
+                                          note.noteText = value;
+                                        }
+
+                                        //Db().update(note: notesList[index]);
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            content: SizedBox(
+                                              height: 200,
+                                              child: Column(
+                                                children: [
+                                                  const Text("Edit note"),
+                                                  TextField(
+                                                    maxLines: 4,
+                                                    onChanged: (value) {
+                                                      addTextNote(value);
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  Row(
+                                                    children: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            note.noteText = "";
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              "Cancel")),
+                                                      const SizedBox(width: 10),
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            setState(() {});
+                                                            Db().update(
+                                                                ogNote:
+                                                                    notesList[
+                                                                        index],
+                                                                newNote: note);
+
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              "Update note"))
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(Icons.edit))
+                                ],
                               ),
                             );
                           },
@@ -252,8 +320,8 @@ class _HomePageState extends State<HomePage>
                                     notesList[detailsIndex!]
                                         .noteDate
                                         .toString(),
-                                    style:
-                                        const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),

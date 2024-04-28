@@ -21,10 +21,16 @@ class Db {
   }
 
   delete({required NoteModel note}) async {
-    print(note.id);
     final database = await DatabaseHelper().dataBase;
     return await database
         .delete(tableName, where: "id=?", whereArgs: [note.id]);
+  }
+
+  update({required NoteModel ogNote, required NoteModel newNote}) async {
+    final database = await DatabaseHelper().dataBase;
+
+    return await database.update(tableName, ogNote.toMap(newNote),
+        where: 'id=?', whereArgs: [ogNote.id]);
   }
 
   clearNotesTable() async {

@@ -16,4 +16,12 @@ class NoteModel {
     return NoteModel(
         id: map["id"], noteText: map["note"], noteDate: map["date"]);
   }
+
+  Map<String, Object?> toMap(NoteModel newNote) {
+    return {
+      // "id": id,
+      "note": newNote.noteText,
+      "date": newNote.noteDate,
+    };
+  }
 }
