@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:splash_screen/Note%20it/note_model.dart';
 
@@ -23,31 +22,29 @@ class _NoteDetailsState extends State<NoteDetails>
   Widget build(BuildContext context) {
     @override
     void initState() {
-      setState(() {});
-
       super.initState();
-      WidgetsBinding.instance!.addObserver(this);
+      WidgetsBinding.instance.addObserver(this);
     }
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Details"),
+        title: const Text("Details"),
         actions: [
           IconButton(
               onPressed: () {
                 speakText(widget.note.noteText);
               },
-              icon: const Icon(Icons.audiotrack)),
+              icon: const Icon(Icons.graphic_eq)),
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         children: [
           Align(
               alignment: Alignment.centerLeft,
               child: Text(widget.note.noteDate.toString())),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -56,7 +53,7 @@ class _NoteDetailsState extends State<NoteDetails>
             child: Center(
                 child: Text(
               widget.note.noteText,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             )),
           ),
         ],

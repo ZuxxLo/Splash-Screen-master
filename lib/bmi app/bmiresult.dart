@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class Result extends StatelessWidget {
   const Result({
@@ -8,22 +8,6 @@ class Result extends StatelessWidget {
   final double bmi;
   @override
   Widget build(BuildContext context) {
-    String interpretBMI(double bmi) {
-      if (bmi < 18.5) {
-        return "underweight";
-      } else if (bmi >= 18.5 && bmi < 25) {
-        return "healthy";
-      } else if (bmi >= 25.0 && bmi < 30) {
-        return "overweight";
-      } else {
-        return "obesity";
-      }
-    }
-
-    double calculatePosition(double bmi) {
-      // Assuming that bmi ranges from 0 to 100
-      return (bmi / 100) * (MediaQuery.of(context).size.width - 26);
-    }
 
     return Scaffold(
       body: Affichage(bmi: bmi),
@@ -64,13 +48,13 @@ class Affichage extends StatelessWidget {
         Center(
           child: Text(
             bmi.toString(),
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
         Center(
           child: Text(
             interpretBMI(bmi),
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-
 import 'Note it/home_page.dart';
 
 void main() {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
- import 'package:splash_screen/main.dart';
- 
-import 'package:flutter/material.dart';
+import 'package:splash_screen/main.dart';
+
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'how_model.dart';
@@ -19,7 +18,6 @@ class _HomePageState extends State<HomePage>
     with WidgetsBindingObserver, RouteAware {
   PlayerState isPlaying = PlayerState.playing;
   bool isPlayingbool = true;
-  bool _isInForeground = true;
 
   final player = AudioPlayer();
 
@@ -58,7 +56,7 @@ class _HomePageState extends State<HomePage>
     });
 
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -78,7 +76,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void didPushNext() {
-    print('sqqs Screen3');
     pauseAudio();
 
     super.didPushNext();
@@ -86,8 +83,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void didPopNext() {
-    print('didPopNext Screen3');
-
     resumeAudio();
   }
 
@@ -100,22 +95,18 @@ class _HomePageState extends State<HomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        print("app in resumed");
-
         resumeAudio();
         break;
       case AppLifecycleState.inactive:
-        print("app in inactive");
         pauseAudio();
         break;
       case AppLifecycleState.paused:
-        print("app in paused");
-
         pauseAudio();
         break;
       case AppLifecycleState.detached:
-        print("app in detached");
         pauseAudio();
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }
@@ -175,10 +166,11 @@ class _HomePageState extends State<HomePage>
         actions: [
           IconButton(
               onPressed: () {
-                if (isPlayingbool)
+                if (isPlayingbool) {
                   pauseAudio();
-                else
+                } else {
                   resumeAudio();
+                }
 
                 setState(() {});
               },
@@ -191,7 +183,7 @@ class _HomePageState extends State<HomePage>
         // scrollDirection: Axis.vertical,
         child: Column(
           children: [
-             for (int index = 0; index < salawat.length; index++)
+            for (int index = 0; index < salawat.length; index++)
               InkWell(
                   onLongPress: () {
                     // pauseAudio();
@@ -203,7 +195,6 @@ class _HomePageState extends State<HomePage>
                         )).then((_) {
                       // playAudio();
                     });
-                    ;
                   },
                   onTap: () {
                     String text = "${salawat[index].rakaat}";
@@ -212,14 +203,13 @@ class _HomePageState extends State<HomePage>
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
+                      margin: const EdgeInsets.fromLTRB(50, 0, 50, 20),
                       content:
                           Text("Rakaat :$text", textAlign: TextAlign.center),
                     ));
                   },
                   onDoubleTap: () {
                     isFirstTimeRotated = 0;
-                    print(index);
                     setState(() {
                       salawat[index].isDoubleClicked =
                           !salawat[index].isDoubleClicked;
@@ -228,9 +218,8 @@ class _HomePageState extends State<HomePage>
                   child: !salawat[index].isDoubleClicked
                       ? TweenAnimationBuilder(
                           tween: Tween<double>(begin: 0.0, end: 1.0),
-                          duration: Duration(seconds: 1),
+                          duration: const Duration(seconds: 1),
                           builder: (context, value, child) {
-                            print(value);
                             return Transform.rotate(
                               angle: isFirstTimeRotated *
                                   value *

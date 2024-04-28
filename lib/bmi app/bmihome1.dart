@@ -1,6 +1,4 @@
-import 'dart:math';
-
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -89,7 +87,6 @@ class _HomeState extends State<Home> {
     }
 
     bmi = bmiT;
-    print(bmi);
 
     return bmiT < 100 ? bmiT : 100;
   }
@@ -98,7 +95,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("BMI calcultor"),
+        title: const Text("BMI calcultor"),
         centerTitle: true,
       ),
       resizeToAvoidBottomInset: true,
@@ -121,7 +118,7 @@ class _HomeState extends State<Home> {
                     )),
                     ToggleButtons(
                         borderRadius: BorderRadius.circular(15),
-                        isSelected: [
+                        isSelected: const [
                           false,
                           false
                         ],
@@ -268,7 +265,6 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        print("object");
                         setState(() {
                           canAffic = true;
                           calculateBMI(genderMale, age!, height!, weight!);
@@ -290,14 +286,14 @@ class _HomeState extends State<Home> {
                         Center(
                           child: Text(
                             bmi!.toStringAsFixed(2),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Center(
                           child: Text(
                             interpretBMI(bmi!),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -317,7 +313,6 @@ class _HomeState extends State<Home> {
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   stops: [0, 0.25, 0.36, 0.4],
-                                  
                                   colors: [
                                     Colors.red,
                                     Colors.green,
@@ -372,7 +367,7 @@ class _HomeState extends State<Home> {
                   ),
                 )
               else
-                SizedBox(),
+                const SizedBox(),
               const SizedBox(height: 80),
             ]),
           ),

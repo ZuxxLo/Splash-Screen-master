@@ -18,8 +18,8 @@ class MainApp extends StatelessWidget {
           colorScheme: const ColorScheme.dark()
               .copyWith(primary: Colors.purple, secondary: Colors.purpleAccent),
           textSelectionTheme:
-              TextSelectionThemeData(cursorColor: Colors.purple)),
-      home: Home(),
+              const TextSelectionThemeData(cursorColor: Colors.purple)),
+      home: const Home(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:splash_screen/Note%20it/db.dart';
 import 'package:splash_screen/Note%20it/note_details.dart';
 import 'package:splash_screen/Note%20it/note_model.dart';
 
@@ -18,7 +19,7 @@ class _HomePageState extends State<HomePage>
     setState(() {});
 
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -49,18 +50,17 @@ class _HomePageState extends State<HomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        print("app in resumed");
-
         stopSpeaking();
         break;
       case AppLifecycleState.inactive:
-        print("app in inactive");
         stopSpeaking();
         break;
       case AppLifecycleState.paused:
-        print("app in paused");
-
         stopSpeaking();
+        break;
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }
@@ -69,30 +69,71 @@ class _HomePageState extends State<HomePage>
   addNote(NoteModel note) {
     setState(() {
       notesList.add(note);
-
-      print(note.noteDate);
+      Db().create(note: note);
     });
     Navigator.pop(context);
   }
 
   deleteNote(index) {
     setState(() {
+      Db().delete(note: notesList[index]);
       notesList.removeAt(index);
     });
+    detailsIndex = 0;
     Navigator.pop(context);
   }
 
+  int? detailsIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Note it"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: SizedBox(
+                        height: 110,
+                        child: Column(
+                          children: [
+                            const Text(
+                                "Are you sure you want to delete all notes"),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Cancel")),
+                                const SizedBox(width: 10),
+                                TextButton(
+                                    onPressed: () {
+                                      setState(() {});
+                                      Db().clearNotesTable();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Delete all notes"))
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.delete_forever))
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            NoteModel? note = NoteModel();
+            NoteModel? note = NoteModel(
+                noteText: "", noteDate: NoteModel.dateFormat(DateTime.now()));
             addTextNote(value) {
               note.noteText = value;
             }
@@ -100,7 +141,7 @@ class _HomePageState extends State<HomePage>
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                content: Container(
+                content: SizedBox(
                   height: 200,
                   child: Column(
                     children: [
@@ -116,14 +157,14 @@ class _HomePageState extends State<HomePage>
                         children: [
                           TextButton(
                               onPressed: () {
-                                note?.noteText = "";
+                                note.noteText = "";
                                 Navigator.pop(context);
                               },
                               child: const Text("Cancel")),
                           const SizedBox(width: 10),
                           TextButton(
                               onPressed: () {
-                                addNote(note!);
+                                addNote(note);
                               },
                               child: const Text("Add note"))
                         ],
@@ -135,83 +176,96 @@ class _HomePageState extends State<HomePage>
             );
           },
         ),
-        body: Builder(builder: (context) {
-          if (notesList.isEmpty) {
-            return const Center(
-              child: Text(
-                "No notes",
-                style: TextStyle(color: Colors.black),
-              ),
-            );
-          } else {
-            return ListView.builder(
-              itemCount: notesList.length,
-              itemBuilder: (context, index) {
-                return OrientationBuilder(
-                  builder: (context, orientation) {
-                    print(orientation);
-                    if (MediaQuery.of(context).orientation ==
-                        Orientation.portrait) {
-                      return InkWell(
-                        onTap: () {
-                          goToDetailsPage(index);
-                        },
-                        onLongPress: () {
-                          deleteDiagMeth(context, index);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border:
-                                  Border.all(color: Colors.deepPurpleAccent)),
-                          child: Text(notesList[index].noteText!,
-                              style: const TextStyle(fontSize: 18)),
-                        ),
-                      );
-                    } else {
-                      return InkWell(
-                        onTap: () {
-                          goToDetailsPage(index);
-                        },
-                        onLongPress: () {
-                          deleteDiagMeth(context, index);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border:
-                                  Border.all(color: Colors.deepPurpleAccent)),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(notesList[index].noteText!,
+        body: FutureBuilder(
+          future: Db().getAllNotes(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              notesList = snapshot.data!;
+
+              if (notesList.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No notes",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                );
+              } else {
+                return OrientationBuilder(builder: (context, orientation) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: notesList.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  detailsIndex = index;
+                                });
+                              },
+                              onDoubleTap: () {
+                                goToDetailsPage(index);
+                              },
+                              onLongPress: () {
+                                deleteDiagMeth(context, index);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                margin:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                decoration: BoxDecoration(
+                                    color: Colors.deepPurpleAccent
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: Colors.deepPurpleAccent)),
+                                child: Text(notesList[index].noteText,
                                     style: const TextStyle(fontSize: 18)),
                               ),
-                              Column(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        speakText(notesList[index].noteText);
-                                      },
-                                      icon: const Icon(Icons.audiotrack)),
-                                  Text(notesList[index].noteDate.toString()),
-                                ],
-                              )
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    }
-                  },
-                );
-              },
-            );
-          }
-        }));
+                      ),
+                      MediaQuery.of(context).orientation ==
+                                  Orientation.landscape &&
+                              notesList.isNotEmpty &&
+                              detailsIndex != null
+                          ? SizedBox(
+                              width: 270,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 100,
+                                    width: 100,
+                                    child: IconButton(
+                                        onPressed: () {
+                                          speakText(notesList[detailsIndex!]
+                                              .noteText);
+                                        },
+                                        icon: const Icon(Icons.graphic_eq,
+                                            size: 80.0)),
+                                  ),
+                                  Text(
+                                    notesList[detailsIndex!]
+                                        .noteDate
+                                        .toString(),
+                                    style:
+                                        const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const SizedBox(),
+                    ],
+                  );
+                });
+              }
+            }
+          },
+        ));
   }
 
   goToDetailsPage(index) {
@@ -224,7 +278,7 @@ class _HomePageState extends State<HomePage>
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: Container(
+        content: SizedBox(
           height: 110,
           child: Column(
             children: [
